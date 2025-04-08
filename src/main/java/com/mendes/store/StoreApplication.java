@@ -1,5 +1,6 @@
 package com.mendes.store;
 
+import com.mendes.store.config.TestConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
