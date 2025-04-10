@@ -21,6 +21,10 @@ public class ProductService {
         return repository.getReferenceById(id);
     }
 
+    public void saveProduct(Product obj){
+        repository.save(obj);
+    }
+
     public void deleteProduct(Long id){
         Product obj = repository.getReferenceById(id);
         repository.delete(obj);
