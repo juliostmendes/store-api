@@ -1,13 +1,12 @@
 package com.mendes.store.controllers;
 
-import com.mendes.store.domain.product.Product;
-import com.mendes.store.domain.product.ProductDetailDTO;
-import com.mendes.store.domain.product.ProductListDTO;
+import com.mendes.store.domain.product.*;
 import com.mendes.store.service.ProductService;
-import org.hibernate.query.Page;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -30,9 +29,29 @@ public class ProductController {
         return ResponseEntity.ok().body(new ProductDetailDTO(obj));
     }
 
+    @PostMapping
+    @Transactional
+    public ResponseEntity createProduct(@RequestBody ProductSaveDTO obj, UriComponentsBuilder uriBuilder){
+        Product product = new Product(obj);
+        service.saveProduct(product);
+
+        var uri = uriBuilder.path("/products/{id}").buildAndExpand(product.getId()).toUri();
+        return ResponseEntity.created(uri).build();
+    }
+
     @DeleteMapping(value = "/{id}")
+    @Transactional
     public ResponseEntity deleteProduct(@PathVariable Long id){
         service.deleteProduct(id);;
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(value = "/{id}")
+    @Transactional
+    public ResponseEntity updateProduct(@RequestBody ProductUpdateDTO obj){
+        Product product = service.getReferenceById(obj.id());
+        product.updateInfo(obj);
+
+        return ResponseEntity.ok().body(new ProductDetailDTO(product));
     }
 }
